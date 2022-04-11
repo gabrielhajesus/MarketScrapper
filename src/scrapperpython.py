@@ -3,7 +3,7 @@ from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 import pandas
 
-urll = 'https://www.kabum.com.br/'
+url = 'https://www.kabum.com.br/'
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'}
 
 def trata_saida(input):
@@ -15,7 +15,7 @@ def trata_saida(input):
 
 
 try:
-    req = Request(urll, headers = headers)
+    req = Request(url, headers = headers)
     response = urlopen(req)
     html = response.read()
     trata_saida(html)
