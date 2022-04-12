@@ -35,9 +35,10 @@ for anuncio in anuncios:
     # Adicionando resultado a lista cards
     cards.append(card)
 
+    # Adicionando as imagens ao nosso programa
     image = anuncio.find('img', {'class':'imageCard'})
-    urlretrieve(image.get('src'), './src/img/' + image.get('src').split('/')[-1] )
+    urlretrieve(image.get('src'), './src/img/kabum/' + image.get('src').split('/')[-1] )
 
 dataset = pd.DataFrame(cards)
-dataset.to_csv('./src/data/dataset.csv', sep=';', index = False, encoding ='utf-8-sig')
+dataset.to_csv('./src/data/kabum/promoçõeskabum.csv', sep=';', index = False, encoding ='utf-8-sig')
 print(dataset)
