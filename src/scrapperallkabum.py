@@ -1,63 +1,72 @@
+from posixpath import split
 from urllib.request import Request, urlopen, urlretrieve
 from bs4 import BeautifulSoup
 import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+
+#definindo o navegador do drive como invisivel
+options= webdriver.ChromeOptions()
+
+#Executando drive do google
+driver = webdriver.Chrome(service = Service('/Users/Gabriel/drivechrome/chromedriver') , options= options)
+driver.maximize_window() # For maximizing window
+
+print ("Chrome Initialized")
 
 # Declarando variável cards
 cards = []
 
-# Obtendo o HTML
-url = 'https://www.kabum.com.br'
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'}
-req = Request(url, headers = headers)
-response = urlopen(req)
-html = response.read().decode('utf-8')
-soup = BeautifulSoup(html, 'html.parser')
-
 # Obtendo a campanha de promoção atual
 
-resultado = soup.find('a' , {'id': "bannerPrincipal"})
-url = url + resultado['href']
-
-req = Request(url, headers = headers)
-response = urlopen(req)
-html = response.read().decode('utf-8')
-soup = BeautifulSoup(html, 'html5lib')
+#resultado = soup.find('a' , {'id': "bannerPrincipal"})
+#driver.get("https://www.kabum.com.br"+resultado))
 
 # Obtendo as paginas
 
-paginas = soup.find('div' , {'id': "__next"})
+driver.get('https://www.kabum.com.br/ofertas/megamaio?pagina=1' )
+soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-with open("saida_texto1.txt", "w", encoding= "utf-8") as arquivo:
-        arquivo.write(str(paginas.prettify()))
+print('pegando as paginas')
+page = int(soup.find('div', {'id' : "blocoPaginacao"}).findAll('button')[-3].getText())
 
+for i in range(page):
 
+    print('aba ' + str(i))
 
-"""# Obtendo as TAGs de interesse
-anuncios = soup.find('div', {'id':"secaoOfertasCampanha"}).find('div',{'class':"slick-slider slick-initialized"}).findAll('div', {"style":"outline:none"})
+    ## Obtendo o HTML
+    driver.get('https://www.kabum.com.br/ofertas/megamaio?pagina=' + str(i + 1))
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-# Coletando as informações dos CARDS
-for anuncio in anuncios:
-    card = {}
+    # Obtendo as TAGs de interesse
+    anuncios = soup.find('section', {'id':"blocoProdutosListagem"}).findAll('div', {'class':"productCard"})
 
-    # Nome
-    card['Nome do produto'] = anuncio.find('h2').getText()
+    # Coletando as informações dos CARDS
+    for anuncio in anuncios:
+        card = {}
 
-    # Valor antigo
-    card['Preço Antigo do produto'] = anuncio.find(class_ = "oldPriceCard").getText()
+        # Nome
+        card['Nome do produto'] = anuncio.find('span', {'class':"nameCard"}).getText()
 
-    # Valor
-    card['Preço do produto'] = anuncio.find(class_ = "priceCard").getText()
+        # Valor antigo
+        card['Preço Antigo do produto'] = anuncio.find(class_ = "oldPriceCard").getText()
 
-    #Tipo de Compra
-    card['Tipo de Compra'] = anuncio.find(class_ = "priceTextCard").getText()
+        # Valor
+        card['Preço do produto'] = anuncio.find(class_ = "priceCard").getText()
 
-    # Adicionando resultado a lista cards
-    cards.append(card)
+        #Tipo de Compra
+        card['Tipo de Compra'] = anuncio.find(class_ = "priceTextCard").getText()
 
-    # Adicionando as imagens ao nosso programa
-    image = anuncio.find('img', {'class':'imageCard'})
-    urlretrieve(image.get('src'), './src/img/kabum/' + image.get('src').split('/')[-1] )
+        # Adicionando resultado a lista cards
+        cards.append(card)
+
+        # Adicionando as imagens ao nosso programa
+        image = anuncio.find('img', {'class':'imageCard'})
+        urlretrieve(image.get('src'), './data/kabum/img/' + image.get('src').split('/')[-1] )
+
+driver.quit()
 
 dataset = pd.DataFrame(cards)
-dataset.to_csv('./src/data/kabum/promoçõeskabum.csv', sep=';', index = False, encoding ='utf-8-sig')
-print(dataset)"""
+dataset.to_csv('./data/kabum/dataset/promoçõeskabum.csv', sep=';', index = False, encoding ='utf-8-sig')

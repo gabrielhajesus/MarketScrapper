@@ -25,7 +25,9 @@ response = urlopen(req)
 html = response.read().decode('utf-8')
 soup = BeautifulSoup(html, 'html.parser')
 
-paginas = soup.find('div' , {'id': "__next"}).find('div' ,{'class': "jss40"})
+paginas = soup.find('div' , {'id': "__next"}).findAll('a' ,{'data-cy': "list-product"})
+
+
 with open("saida_texto1.txt", "w", encoding= "utf-8") as arquivo:
         arquivo.write(str(paginas))
 
