@@ -1,64 +1,84 @@
+import time
+from posixpath import split
 from urllib.request import Request, urlopen, urlretrieve
 from bs4 import BeautifulSoup
 import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+
+
+#definindo o navegador do drive como invisivel
+options= webdriver.ChromeOptions()
+
+#Executando drive do google
+driver = webdriver.Chrome(service = Service('/Users/Gabriel/drivechrome/chromedriver') , options= options)
+driver.maximize_window() # For maximizing window
+
+print ("Chrome Initialized")
+
+# Declarando variável cards
+cards = []
+
+SCROLL_PAUSE_TIME = 2
 
 # Declarando variável cards
 cards = []
 
 # Obtendo o HTML
-url = 'https://www.pichau.com.br/'
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'}
-req = Request(url, headers = headers)
-response = urlopen(req)
-html = response.read().decode('utf-8')
-soup = BeautifulSoup(html, 'html.parser')
 
-# Obtendo a campanha de promoção atual
-
-resultado = soup.find('a' , {'class': "jss12 jss27"})
-url = resultado['href']
-print(url)
+driver.get('https://www.pichau.com.br/promocao/trabalhador?utm_source=home&utm_medium=banner&utm_campaign=trabalhador_2022')
 
 
-req = Request(url, headers = headers)
-response = urlopen(req)
-html = response.read().decode('utf-8')
-soup = BeautifulSoup(html, 'html.parser')
+# Pegando o tamanho do scroll
+last_height = driver.execute_script("return document.body.scrollHeight")
 
-paginas = soup.find('div' , {'id': "__next"}).findAll('a' ,{'data-cy': "list-product"})
+while True:
+    # Scroll down to bottom
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+    # Wait to load page
+    time.sleep(SCROLL_PAUSE_TIME)
+
+    # Calculate new scroll height and compare with last scroll height
+    new_height = driver.execute_script("return document.body.scrollHeight")
+    if new_height == last_height:
+        break
+    last_height = new_height
+
+soup = BeautifulSoup(driver.page_source, 'html.parser')
+print('pegando o html da pagina completa')
 
 
-with open("saida_texto1.txt", "w", encoding= "utf-8") as arquivo:
-        arquivo.write(str(paginas))
-
-
-"""""
 # Obtendo as TAGs de interesse
-anuncios = soup.find('div', {'id':"secaoOfertasCampanha"}).find('div',{'class':"slick-slider slick-initialized"}).findAll('div', {"style":"outline:none"})
+anuncios = soup.find('div', {'class':"infinite-scroll-component__outerdiv"}).find('div',{'class':"MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3"}).findAll('div', {"class":"MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 MuiGrid-grid-lg-4 MuiGrid-grid-xl-3"})
+
 
 # Coletando as informações dos CARDS
 for anuncio in anuncios:
     card = {}
 
-    # Nome
-    card['Nome do produto'] = anuncio.find('h2').getText()
+    conteudoTexto = anuncio.find(class_ = "MuiCardContent-root").getText()
+    #Placa de Video Asrock Radeon RX 6700 XT Challenger D 12GB GDDR6 OC 192-bit, 90-GA31ZZ-00UANFde R$ 7.840,80 por:
+    # à vistaR$5.299,90no PIX com 12% descontoR$ 6.022,61em até 12x de 501,88sem juros no cartão
+    
+    card['Conteudo Texto'] = anuncio.find(class_ = "MuiCardContent-root").getText()
+    
+    #conteudoTexto.split(',')[0]
 
-    # Valor antigo
-    card['Preço Antigo do produto'] = anuncio.find(class_ = "oldPriceCard").getText()
-
-    # Valor
-    card['Preço do produto'] = anuncio.find(class_ = "priceCard").getText()
-
-    #Tipo de Compra
-    card['Tipo de Compra'] = anuncio.find(class_ = "priceTextCard").getText()
+    # Preços
+    #card['Precos'] = conteudoTexto.split()
 
     # Adicionando resultado a lista cards
     cards.append(card)
 
     # Adicionando as imagens ao nosso programa
-    image = anuncio.find('img', {'class':'imageCard'})
-    urlretrieve(image.get('src'), './src/img/kabum/' + image.get('src').split('/')[-1] )
+    #image = anuncio.find('img')
+    #urlretrieve(image.get('src'), './src/img/pichau/' + image.get('src').split('/')[-1] )
+
+
 
 dataset = pd.DataFrame(cards)
-dataset.to_csv('./src/data/kabum/promoçõeskabum.csv', sep=';', index = False, encoding ='utf-8-sig')
-print(dataset)"""
+dataset.to_csv('./data/pichau/dataset/promoçõespichau.csv', sep=';', index = False, encoding ='utf-8-sig')
+print(dataset)

@@ -34,13 +34,6 @@ driver.implicitly_wait(20)
 
 elements = driver.find_elements(By.CLASS_NAME,"MuiTypography-h6")
 
-lista = []
-
-for element in elements :
-    lista.append(element.text)
-
-with open("saida_texto1.txt", "w", encoding= "utf-8") as arquivo:
-        arquivo.write(str(lista))
-
+print(elements)
 
 driver.quit()
