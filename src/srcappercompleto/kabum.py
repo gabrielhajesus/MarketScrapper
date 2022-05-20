@@ -9,38 +9,35 @@ import pandas as pd
 
 #Conexão com o Mongodb
 client = MongoClient('localhost', 27017)
-db = client.kabum
-promocao = db.promocao
+db = client.sites
+promocao = db.kabum
 
 #Definindo o navegador do drive como Chrome
 options= webdriver.ChromeOptions()
 
 #Executando drive do google
 driver = webdriver.Chrome(service = Service('/Users/Gabriel/drivechrome/chromedriver') , options= options)
-driver.maximize_window() # For maximizing window
-
+driver.maximize_window()
 print ("Chrome Initialized")
 
-# Declarando variável cards
-cards = []
-
 # Obtendo a campanha de promoção atual
-
 driver.get("https://www.kabum.com.br")
 soup = BeautifulSoup(driver.page_source, 'html.parser')
 campanhaAtual= soup.find('a' , {'id': "bannerPrincipal"}).get('href')
 
 # Indo para a campanha de promoção atual
-
 driver.get('https://www.kabum.com.br' + campanhaAtual + '?pagina=1')
 soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-# Obtendo as paginas
+# Declarando variável cards
+cards = []
 
+# Obtendo as paginas
 print('pegando as paginas')
 page = int(soup.find('div', {'id' : "blocoPaginacao"}).findAll('button')[-3].getText())
 
-for i in range(3):
+#Obtendo o conteudo do site
+for i in range(2):
 
     print('aba ' + str(i))
 
@@ -72,10 +69,16 @@ for i in range(3):
 
         # Adicionando as imagens ao nosso programa
         image = anuncio.find('img', {'class':'imageCard'})
-        urlretrieve(image.get('src'), './src/imgkabum/' + image.get('src').split('/')[-1] )
+        nome = image.get('src').split('/')[-1]
+        while(len(nome) > 178):
+            aux = nome.split('-').pop()
+            nome = "-".join(aux)   
+        urlretrieve(image.get('src'), './data/kabum/img/' + nome)
 
+#Fechando o Driver
 driver.quit()
 
+#Inserindo o resultado no banco de dados
 promocao.insert_many(cards)
 
 #dataset = pd.DataFrame(cards)
