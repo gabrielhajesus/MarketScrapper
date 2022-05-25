@@ -37,7 +37,7 @@ print('pegando as paginas')
 page = int(soup.find('div', {'id' : "blocoPaginacao"}).findAll('button')[-3].getText())
 
 #Obtendo o conteudo do site
-for i in range(2):
+for i in range(73):
 
     print('aba ' + str(i))
 
@@ -53,7 +53,7 @@ for i in range(2):
         card = {}
 
         # Nome
-        card['name_card'] = anuncio.find('span', {'class':"nameCard"}).getText()
+        card['name'] = anuncio.find('span', {'class':"nameCard"}).getText()
 
         # Valor antigo
         card['old_price_card'] = anuncio.find(class_ = "oldPriceCard").getText()
@@ -68,19 +68,15 @@ for i in range(2):
         cards.append(card)
 
         # Adicionando as imagens ao nosso programa
-        image = anuncio.find('img', {'class':'imageCard'})
+        """image = anuncio.find('img', {'class':'imageCard'})
         nome = image.get('src').split('/')[-1]
         while(len(nome) > 178):
             aux = nome.split('-').pop()
             nome = "-".join(aux)   
-        urlretrieve(image.get('src'), './data/kabum/img/' + nome)
+        urlretrieve(image.get('src'), './data/kabum/img/' + nome)"""
 
 #Fechando o Driver
 driver.quit()
 
 #Inserindo o resultado no banco de dados
 promocao.insert_many(cards)
-
-#dataset = pd.DataFrame(cards)
-#dataset.to_csv('./data/kabum/dataset/promoçõeskabum.csv', sep=';', index = False, encoding ='utf-8-sig')
-

@@ -31,11 +31,7 @@ campanhaAtual = paginaprincipal.main.div.div.div.div.ul.li.a.get('href')
 # Indo para a campanha atual
 driver.get(campanhaAtual)
 print('Pegou a campanha Atual')
-"""webdriver.ActionChains(driver).key_down(Keys.HOME).key_up(Keys.HOME).perform()
-        for i in range(200):
-            print(i)
-            webdriver.ActionChains(driver).key_down(Keys.PAGE_DOWN).key_up(Keys.PAGE_DOWN).perform()
-            time.sleep(0.5)"""
+
 # Pegando o tamanho do scroll
 SCROLL_PAUSE_TIME = 2
 last_height = driver.execute_script("return document.body.scrollHeight")
@@ -53,8 +49,6 @@ while True:
         print(range(last_height))
         for i in range(1000):
             driver.execute_script("window.scrollTo(0, "+ str(i*250) +");")
-            if i%10 == 0:
-                print(str(i))
         break
     last_height = new_height
 
@@ -97,11 +91,10 @@ for anuncio in anuncios:
         #Preço parcelado
         preco_parcelado = anuncio.find('div', {'class':'MuiCardContent-root'}).div.div.find_next_sibling().find_next_sibling().div.div.getText()
         parcelado = anuncio.find('div', {'class':'MuiCardContent-root'}).div.div.find_next_sibling().find_next_sibling().div.span.getText()
-        card['price_installments'] = preco_parcelado + ' ' + parcelado
+        card['price_text_card'] = preco_parcelado + ' ' + parcelado
+        cards.append(card)
     except:
-        card['status_do_produto'] = 'Esgotado'
-    # Adicionando resultado a lista cards
-    cards.append(card)
+        continue
 
     # Adicionando as imagens a lista
     try:
@@ -110,12 +103,8 @@ for anuncio in anuncios:
     except:
         erros.append([card['name'] , anuncio.find('div', {"class":"lazyload-wrapper"}).img])
 
-with open("saida_texto.txt", "w", encoding= "utf-8") as arquivo:
+with open("saida_de_erros.txt", "w", encoding= "utf-8") as arquivo:
         arquivo.write(str(erros))
-
-with open("1.txt", "w", encoding= "utf-8") as arquivo:
-        arquivo.write(str(imagens))
-
 #Definindo um header para o download das imagens
 opener = URLopener()
 opener.addheader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36')
