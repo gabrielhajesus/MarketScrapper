@@ -6,11 +6,11 @@ from selenium.webdriver.common.by import By
 from pymongo import MongoClient
 from urllib.request import Request, urlopen, urlretrieve
 import pandas as pd
+from banco import Banco
 
 #Conexão com o Mongodb
-client = MongoClient('localhost', 27017)
-db = client.sites
-promocao = db.kabum
+banco_de_dados = Banco.inicia_banco()
+kabum = Banco.kabum(banco_de_dados)
 
 #Definindo o navegador do drive como Chrome
 options= webdriver.ChromeOptions()
@@ -24,6 +24,8 @@ print ("Chrome Initialized")
 driver.get("https://www.kabum.com.br")
 soup = BeautifulSoup(driver.page_source, 'html.parser')
 campanhaAtual= soup.find('a' , {'id': "bannerPrincipal"}).get('href')
+nomecampanha = campanhaAtual.split('/')
+nomecampanha = nomecampanha[-1]
 
 # Indo para a campanha de promoção atual
 driver.get('https://www.kabum.com.br' + campanhaAtual + '?pagina=1')
@@ -37,9 +39,9 @@ print('pegando as paginas')
 page = int(soup.find('div', {'id' : "blocoPaginacao"}).findAll('button')[-3].getText())
 
 #Obtendo o conteudo do site
-for i in range(73):
+for i in range(page):
 
-    print('aba ' + str(i))
+    print('aba ' + str(i+1))
 
     ## Obtendo o HTML
     driver.get('https://www.kabum.com.br' + campanhaAtual + '?pagina=' + str(i + 1))
@@ -64,19 +66,29 @@ for i in range(73):
         #Tipo de Compra
         card['price_text_card'] = anuncio.find(class_ = "priceTextCard").getText()
 
-        # Adicionando resultado a lista cards
+        #Tag da Promocao
+        card['tag_campanha'] = nomecampanha
+        
+        #Link do produto
+        card['link_produto'] = 'https://www.kabum.com.br' + anuncio.find('a').get('href')
+
+        #Loja da kabum
+        card['loja'] = 'Kabum'
+
+        # Adicionando resultado a lista cards 
         cards.append(card)
 
         # Adicionando as imagens ao nosso programa
-        """image = anuncio.find('img', {'class':'imageCard'})
-        nome = image.get('src').split('/')[-1]
-        while(len(nome) > 178):
+        image = anuncio.find('img', {'class':'imageCard'})
+        nome = card['name']
+        nome = Banco.convertenome(nome)
+        """while(len(nome) > 178):
             aux = nome.split('-').pop()
-            nome = "-".join(aux)   
-        urlretrieve(image.get('src'), './data/kabum/img/' + nome)"""
+            nome = "".join(aux)"""
+        urlretrieve(image.get('src'), './data/kabum/img/' + nome + '.jpg')
 
 #Fechando o Driver
 driver.quit()
 
 #Inserindo o resultado no banco de dados
-promocao.insert_many(cards)
+kabum.insert_many(cards)

@@ -8,12 +8,12 @@ from pymongo import MongoClient
 from urllib.request import Request, URLopener
 import pandas as pd
 import time
+from banco import Banco
 
 
 #Conexão com o Mongodb
-client = MongoClient('localhost', 27017)
-db = client.sites
-promocao = db.pichau
+banco_de_dados = Banco.inicia_banco()
+pichau = Banco.pichau(banco_de_dados)
 
 #Definindo o navegador do drive como Chrome
 options= webdriver.ChromeOptions()
@@ -27,6 +27,7 @@ print ("Chrome Inicializado")
 driver.get("https://www.pichau.com.br/")
 paginaprincipal = BeautifulSoup(driver.page_source, 'html.parser')
 campanhaAtual = paginaprincipal.main.div.div.div.div.ul.li.a.get('href')
+nomecampanha = paginaprincipal.main.div.div.div.div.ul.li.a.get('title')
 
 # Indo para a campanha atual
 driver.get(campanhaAtual)
@@ -85,13 +86,24 @@ for anuncio in anuncios:
 
         # Valor Completo
         preco = anuncio.find('div', {'class':'MuiCardContent-root'}).div.div.div.div.find_next_sibling().find_next_sibling().getText()
-        desconto = anuncio.find('div', {'class':'MuiCardContent-root'}).div.div.div.span.find_next_sibling().find_next_sibling().getText()
-        card['price_card'] = preco + ' ' + desconto
+        
+        card['price_card'] = preco
 
         #Preço parcelado
+        desconto = anuncio.find('div', {'class':'MuiCardContent-root'}).div.div.div.span.find_next_sibling().find_next_sibling().getText()
         preco_parcelado = anuncio.find('div', {'class':'MuiCardContent-root'}).div.div.find_next_sibling().find_next_sibling().div.div.getText()
         parcelado = anuncio.find('div', {'class':'MuiCardContent-root'}).div.div.find_next_sibling().find_next_sibling().div.span.getText()
-        card['price_text_card'] = preco_parcelado + ' ' + parcelado
+        card['price_text_card'] = preco_parcelado + ' ' + parcelado + ' e avista ' + desconto
+
+        #Tag da Promocao
+        card['tag_campanha'] = nomecampanha
+        
+        #Link do produto
+        card['link_produto'] = 'https://www.pichau.com.br' + anuncio.get('href')
+
+        #Loja da pichau
+        card['loja'] = 'Pichau'
+
         cards.append(card)
     except:
         continue
@@ -118,7 +130,4 @@ opener.addheader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleW
 
 
 #Inserindo o resultado no banco de dados
-promocao.insert_many(cards)
-
-#dataset = pd.DataFrame(cards)
-#dataset.to_csv('./data/pichau/dataset/promoçõespichau.csv', sep=';', index = False, encoding ='utf-8-sig')
+pichau.insert_many(cards)
