@@ -4,9 +4,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Jogoteca</title>
+    <style>
+        .container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        }
+        .box {
+        width: 400px;
+        height: 500px;
+        background: #fff;
+        }
+        body {
+        margin: 0px;
+        }
+        </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
   </head>
-  <body>
+  <body class="text-center">
     <div class="container">   
         {% with messages = get_flashed_messages() %}
             {% if messages %} 
@@ -17,16 +35,33 @@
                 </ul>
             {% endif %}
         {% endwith %}
+        <div class="box">
         <h1>Registrar</h1>
         <form method="POST" action="{{ url_for('registra') }}">
             <input type="hidden" name="proxima" value="{{ proxima }}">
-            <p><label>Nome:</label> <input class="form-control" type="text" name="nome" required></p>
-            <p><label>Usuário:</label> <input class="form-control" type="text" name="nickname" required></p>
-            <p><label>E-mail:</label> <input class="form-control" type="email" name="email" required></p>
-            <p><label>Confirmar e-mail:</label> <input class="form-control" type="email" name="email" required></p>
-            <p><label>Senha:</label> <input class="form-control" type="password" name="senha" required></p>
+            <div class="form-floating">
+                <input id="floatingInput" class="form-control" type="text" name="nome" required>
+                <label for="floatingInput">Nome</label>
+            </div>
+            <div class="form-floating">
+                <input id="floatingInput" class="form-control" type="text" name="nickname" required>
+                <label for="floatingInput">Usuário</label>
+            </div>
+            <div class="form-floating">
+                <input id="floatingInput" class="form-control" type="text" name="email" required>
+                <label for="floatingInput">Email</label>
+            </div>
+            <div class="form-floating">
+                <input id="floatingInput" class="form-control" type="text" name="email" required>
+                <label for="floatingInput">Confirmar e-mail</label>
+            </div>
+            <div class="form-floating">
+                <input id="floatingInput" class="form-control" type="text" name="senha" required>
+                <label for="floatingInput">Senha</label>
+            </div>
             <p><button class="btn btn-primary" type="submit">Registrar</button></p>
         </form>
+    </div>
     </div>
 </body>
 </html>

@@ -11,13 +11,23 @@ app = Flask(__name__)
 app.secret_key = 'promohunter'
 
 @app.route('/')
-def index():
-    return render_template('lista.html', titulo='Hardware', todos = kabum.find().limit(20))
+def home():
+    logado = 'false'
+    try:
+        if session['usuario_logado'] != None:
+            logado = 'true'
+            return render_template('home.html', titulo='Promo Hunter', resultados = kabum.find().limit(8), logado = logado)
+        else:
+            session['usuario_logado'] = None
+            return render_template('home.html', titulo='Promo Hunter', resultados = kabum.find().limit(8), logado = logado)
+    except:
+        session['usuario_logado'] = None
+        return render_template('home.html', titulo='Promo Hunter', resultados = kabum.find().limit(8), logado = logado)
 
 @app.route('/registrar')
 def registrar():
-    if session['usuario_logado'] != None:
-        return redirect(url_for('index'))
+#    if session['usuario_logado'] != None:
+#        return redirect(url_for('home'))
     proxima = request.args.get('proxima')
     return render_template('registrar.html', proxima=proxima)
 
@@ -67,7 +77,7 @@ def autenticar():
 def logout():
     session['usuario_logado'] = None
     flash('Logout efetuado com sucesso!')
-    return redirect(url_for('index'))
+    return redirect(url_for('home'))
 
 @app.route('/perfil')
 def perfil():

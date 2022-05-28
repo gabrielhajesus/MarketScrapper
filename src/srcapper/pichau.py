@@ -19,7 +19,7 @@ pichau = Banco.pichau(banco_de_dados)
 options= webdriver.ChromeOptions()
 
 #Executando drive do google
-driver = webdriver.Chrome(service = Service('/Users/Gabriel/drivechrome/chromedriver') , options= options)
+driver = webdriver.Chrome(service = Service('C:/Users/carlo/chromedriver_win32/chromedriver') , options= options)
 driver.maximize_window()
 print ("Chrome Inicializado")
 

@@ -16,7 +16,7 @@ kabum = Banco.kabum(banco_de_dados)
 options= webdriver.ChromeOptions()
 
 #Executando drive do google
-driver = webdriver.Chrome(service = Service('/Users/Gabriel/drivechrome/chromedriver') , options= options)
+driver = webdriver.Chrome(service = Service('C:/Users/carlo/chromedriver_win32/chromedriver') , options= options)
 driver.maximize_window()
 print ("Chrome Initialized")
 
@@ -39,7 +39,7 @@ print('pegando as paginas')
 page = int(soup.find('div', {'id' : "blocoPaginacao"}).findAll('button')[-3].getText())
 
 #Obtendo o conteudo do site
-for i in range(page):
+for i in range(5):
 
     print('aba ' + str(i+1))
 
