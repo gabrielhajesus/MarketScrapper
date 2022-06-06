@@ -1,5 +1,6 @@
 .history
 data/
+src/site/static/img/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

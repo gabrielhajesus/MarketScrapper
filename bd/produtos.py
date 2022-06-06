@@ -1,3 +1,4 @@
+from hashlib import new
 from pymongo import MongoClient
 from banco import Banco
 
@@ -11,21 +12,25 @@ todos_pichau = pichau.find()
 
 
 def inserirnobanco(item = {}, produtos = produtos):
-    nome_de_busca = convertenome(item['name'])
+    nome_de_busca = Banco.convertenome(item['name'])
     if produtos.find_one(nome_de_busca)!= None:
         produtobanco = produtos.find_one(nome_de_busca)
         if produtobanco['menor_preco'] > item['price_card']:
-            produtos.update_one({'nome' : item['name']}, {'$set': {"menor_preco": item['price_card']}})
+            produtos.update_one({'nome' : item['name']}, {'$set': {"menor_preco": item['price_card'], "desconto": desconto(item['old_price_card'], item['price_card'], item['loja'])}})
         if item['loja'] == 'Kabum':
             produtos.update_one({'nome' : item['name']}, 
             {'$set': 
-            {"kabum.preco_kabum" : item['price_card'],
+            {'kabum.old_price': item['old_price_card'],
+            "kabum.preco_kabum" : item['price_card'],
+            'kabum.price_text_card' : item['price_text_card'],
             "kabum.tag_campanha" : item['tag_campanha'],
             "kabum.link_produto" : item['link_produto']}})
         if item['loja'] == 'Pichau':
             produtos.update_one({'nome' : item['name']}, 
             {'$set': 
-            {"pichau.preco_kabum" : item['price_card'],
+            {'pichau.old_price': item['old_price_card'],
+            "pichau.preco_kabum" : item['price_card'],
+            'pichau.price_text_card' : item['price_text_card'],
             "pichau.tag_campanha" : item['tag_campanha'],
             "pichau.link_produto" : item['link_produto']}}) 
     else:
@@ -33,19 +38,33 @@ def inserirnobanco(item = {}, produtos = produtos):
             produto = {
                 'name' : item['name'],
                 'search_name': nome_de_busca,
+                'old_price': item['old_price_card'],
                 'menor_preco' : item['price_card'],
+                'link': item['link_produto'],
+                'desconto': desconto(item['old_price_card'], item['price_card'], item['loja']),
                 'categoria' : definindocategoria(item['name']),
-                'kabum' :  {'preco_kabum' : item['price_card'] , 'tag_campanha' : item['tag_campanha'] , 'link_produto' : item['link_produto']},
+                'kabum' :  {'old_price': item['old_price_card'],
+                            'price' : item['price_card'],
+                            'price_text_card' : item['price_text_card'],
+                            'tag_campanha' : item['tag_campanha'],
+                            'link' : item['link_produto']},
                 'pichau' : None
             }
         if item['loja'] == 'Pichau':
             produto = {
                 'name' : item['name'],
                 'search_name': nome_de_busca,
+                'old_price': item['old_price_card'],
                 'menor_preco' : item['price_card'],
+                'link': item['link_produto'],
+                'desconto': desconto(item['old_price_card'], item['price_card'], item['loja']),
                 'categoria' : definindocategoria(item['name']),
                 'kabum' :  None,
-                'pichau' : {'preco_pichau' : item['price_card'] , 'tag_campanha' : item['tag_campanha'] , 'link_produto' : item['link_produto']}
+                'pichau' : {'old_price': item['old_price_card'],
+                            'price' : item['price_card'] ,
+                            'price_text_card' : item['price_text_card'],
+                            'tag_campanha' : item['tag_campanha'] ,
+                            'link' : item['link_produto']}
             }
         produtos.insert_one(produto)
 
@@ -103,6 +122,14 @@ def definindocategoria(nomec):
 
     return categoria
 
+def desconto(old_price, new_price, loja):
+    old_price = old_price.replace('R$', '').replace('\xa0','').replace('.','').replace(',','')
+    new_price = new_price.replace('R$', '').replace('\xa0','').replace('.','').replace(',','')
+    desconto = int((float(old_price) - float(new_price) ) * 100 / float(old_price))
+    return desconto
+
+
+
 tagKabum = ''
 tagPichau = ''
 
@@ -117,11 +144,15 @@ for item in todos_pichau :
 todos_produtos = produtos.find()
 
 for item in todos_produtos:
-    if item['kabum.tag_campanha'] != tagKabum:
-        produtos.update_one({'nome' : item['name']}, {'$set': {"kabum" : None}})
 
-    if item['pichau.tag_campanha'] != tagPichau:
-        produtos.update_one({'nome' : item['name']}, {'$set': {"pichau" : None}})
+    if item['kabum'] != None: 
+        if item['kabum']['tag_campanha'] != tagKabum:
+            produtos.update_one({'nome' : item['name']}, {'$set': {"kabum" : None}})
 
-    if item['kabum.tag_campanha'] == None and item['pichau.tag_campanha'] == None:
+    if item['pichau'] != None:
+        if item['pichau']['tag_campanha'] != tagPichau:
+            produtos.update_one({'nome' : item['name']}, {'$set': {"pichau" : None}})
+
+
+    if item['kabum'] == None and item['pichau'] == None:
         produtos.deleteOne({{'nome' : item['name']}})

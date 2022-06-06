@@ -19,7 +19,7 @@ pichau = Banco.pichau(banco_de_dados)
 options= webdriver.ChromeOptions()
 
 #Executando drive do google
-driver = webdriver.Chrome(service = Service('C:/Users/carlo/chromedriver_win32/chromedriver') , options= options)
+driver = webdriver.Chrome(service = Service('/Users/Gabriel/drivechrome/chromedriver') , options= options)
 driver.maximize_window()
 print ("Chrome Inicializado")
 
@@ -111,22 +111,21 @@ for anuncio in anuncios:
     # Adicionando as imagens a lista
     try:
         imagem = anuncio.find('div', {"class":"lazyload-wrapper"}).img['src']
-        imagens.append(imagem)
+        imagens.append({'imagem' : imagem, 'nome': card['name']})
     except:
         erros.append([card['name'] , anuncio.find('div', {"class":"lazyload-wrapper"}).img])
 
-with open("saida_de_erros.txt", "w", encoding= "utf-8") as arquivo:
-        arquivo.write(str(erros))
 #Definindo um header para o download das imagens
 opener = URLopener()
 opener.addheader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36')
 
-"""for imagem in imagens:
-    nome = imagem.split('/')[-1]
-    while(len(nome) > 178):
-        aux = nome.split('-').pop()
-        nome = "-".join(aux)
-    filename, headers = opener.retrieve(imagem, './data/pichau/img/'+ nome)"""
+with open("saida_texto.txt", "w", encoding= "utf-8") as arquivo:
+        arquivo.write(imagem)
+
+for imagem in imagens:
+    nome = imagem['nome']
+    nome = Banco.convertenome(nome)
+    filename, headers = opener.retrieve(imagem['imagem'], './data/pichau/img/'+ nome + '.jpg')
 
 
 #Inserindo o resultado no banco de dados

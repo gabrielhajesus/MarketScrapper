@@ -1,31 +1,94 @@
 {% extends "template.html" %}
 {% block conteudo %}
-<section class="py-5">
-    <div class="container px-4 px-lg-5 mt-5">
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content">
-         {% for resultado in resultados %}
-            <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Product image-->
-                    <img class="card-img-top">
-                        <img src="../static/img/airpodsappleprorecargapormagsafeusbcbrancomlwk3ama.png"> 
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">{{ resultado.name }}</h5>
-                            <!-- Product price-->
-                            {{ resultado.price_card }}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2" style="background-color: #ffffff;">
+            <section>
+                <section id="filters">
+                    <h5>Departamentos</h5>     
+                    <section class="mb-4">        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input"type="checkbox" value="Celular/Smartphone" id="condition-checkbox" onclick = " {{ url_for('resultado', filtro = 'Celular/Smartphone') }} ">
+                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox">
+                            Celular/Smartphone
+                            </label>
+                        </div>
+                
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="Cadeira" id="condition-checkbox2">
+                            {% if condition-checkbox %}
+                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox2">
+                                Cadeira
+                            </label>
+                        </div>
+                
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="Computador/Notebook" id="condition-checkbox3">
+                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox3">
+                                Computador/Notebook
+                            </label>
+                        </div>
+                
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="Hardware" id="condition-checkbox4">
+                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox4">
+                                Hardware
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="Periferico" id="condition-checkbox4">
+                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox4">
+                                Periferico
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="TV/Monitor" id="condition-checkbox4">
+                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox4">
+                                TV/Monitor
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="Outros" id="condition-checkbox4">
+                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox4">
+                                Outros
+                            </label>
+                        </div>
+                    </section>
+                </section>       
+            </section>
+        </div>
+        <div class="col-md-10">
+            <div class="row gx-4 row-cols-xl-5">
+                {% for resultado in resultados %}
+                    <div class="col mb-3">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top">
+                                <img src="../static/img/{{ resultado.search_name }}.jpg"> 
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <span class="fw-bolder">{{ resultado.name }}</span>
+                                        <!-- Product price-->
+                                        <p> De:  {{ resultado.old_price }} </p>
+                                        <p> Por: {{ resultado.menor_preco }} </p>
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-dark mt-auto" href="{{ url_for('produto', resultado_produto = resultado.search_name ) }}">View product</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
-         {% endfor %}
         </div>
     </div>
-</section>
+</div>
 {% endblock %}

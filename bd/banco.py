@@ -7,11 +7,11 @@ class Banco:
         return db
     
     def kabum(db):
-        kabum = db.kabum2
+        kabum = db.kabum
         return kabum
     
     def pichau(db):
-        pichau = db.pichau2
+        pichau = db.pichau
         return pichau
 
     def produtos(db):
@@ -24,5 +24,5 @@ class Banco:
         return usuarios
     
     def convertenome(nome):
-        nome = nome.replace(',','').replace('-','').replace(' ','').replace('(', '').replace(')','').replace('.','').lower()
+        nome = nome.replace(',','').replace('-','').replace(' ','').replace('(', '').replace(':','').replace('|','').replace('?','').replace('{','').replace('}','').replace('`','').replace('^', '').replace(')','').replace('.','').replace('/','').replace('"','').replace('!','').replace(';','').replace('+','').replace('~','').replace('<','').replace('>','').replace('	','').replace('*','').lower()
         return nome

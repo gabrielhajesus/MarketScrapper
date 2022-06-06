@@ -1,0 +1,40 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<div class="container px-4 px-lg-5" style="background-color: #fff;">
+    <div class="row gx-4 gx-lg-5 align-items-center my-5">
+        <div class="col-lg-3"><img class="card-img-top" src="../static/img/{{ resultado.search_name }}.jpg" alt="..." /></div>
+        <div class="col-lg-8">
+            <h1 class="font-weight-light">{{ resultado.name }}</h1>
+            <p> A promoção com melhor preço </p>
+            <p> {{ resultado.menor_preco }}</p>
+            <a class="btn btn-outline-dark" href="{{ resultado.link }}">Ver Produto</a>
+        </div>
+    </div>
+    <div class="row gx-4 gx-lg-5">
+        {% if resultado.kabum != None %}
+        <div class="col-md-4 mb-5">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Kabum</h2>
+                    <p> O preço na Kabum é: </p>
+                    <p> {{ resultado.kabum.preco_kabum }}</p>
+                </div>
+                <div class="card-footer"><a class="btn btn-outline-dark" href="{{ resultado.kabum.link_produto }}">More Info</a></div>
+            </div>
+        </div>
+        {% endif %}
+        {% if resultado.pichau != None %}
+        <div class="col-md-4 mb-5">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Pichau</h2>
+                    <p> O preço na Pichau é: </p>
+                    <p> {{ resultado.pichau.preco_pichau }}</p>
+                </div>
+                <div class="card-footer"><a class="btn btn-outline-dark" href="{{ resultado.pichau.link_produto }}">More Info</a></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

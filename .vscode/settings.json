@@ -2,6 +2,6 @@
     "python.analysis.extraPaths": [
         "./src/scrapper/",
         "./src/site/",
-        "./src/bd/"
+        "./bd/"
     ]
 }
