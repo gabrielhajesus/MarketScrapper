@@ -5,58 +5,61 @@
         <div class="col-md-2" style="background-color: #ffffff;">
             <section>
                 <section id="filters">
-                    <h5>Departamentos</h5>     
-                    <section class="mb-4">        
-                        <div class="form-check mb-3">
-                            <input class="form-check-input"type="checkbox" value="Celular/Smartphone" id="condition-checkbox" onclick = " {{ url_for('resultado', filtro = 'Celular/Smartphone') }} ">
-                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox">
-                            Celular/Smartphone
-                            </label>
-                        </div>
-                
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" value="Cadeira" id="condition-checkbox2">
-                            {% if condition-checkbox %}
-                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox2">
-                                Cadeira
-                            </label>
-                        </div>
-                
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" value="Computador/Notebook" id="condition-checkbox3">
-                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox3">
-                                Computador/Notebook
-                            </label>
-                        </div>
-                
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" value="Hardware" id="condition-checkbox4">
-                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox4">
-                                Hardware
-                            </label>
-                        </div>
+                    <h5>Departamentos</h5>
+                    <input type="hidden" name="filtro" value="{{ filtro }}">    
+                    <form action="{{ url_for('resultado') }}" method="post">
+                        <ul>
+                            <li>
+                                <input class="form-check-input" type="checkbox" value="Celular/Smartphone" name = "checkbox">
+                                <label class="form-check-label text-uppercase small text-muted">
+                                    Celular/Smartphone
+                                </label>
+                            </li>
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" value="Periferico" id="condition-checkbox4">
-                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox4">
-                                Periferico
-                            </label>
-                        </div>
+                            <li>
+                                <input class="form-check-input" type="checkbox" value="Cadeira" name = "checkbox">
+                                <label class="form-check-label text-uppercase small text-muted" >
+                                    Cadeira
+                                </label>
+                            </li>
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" value="TV/Monitor" id="condition-checkbox4">
-                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox4">
-                                TV/Monitor
-                            </label>
-                        </div>
+                            <li>
+                                <input class="form-check-input" type="checkbox" value="Computador/Notebook" name = "checkbox">
+                                <label class="form-check-label text-uppercase small text-muted">
+                                    Computador/Notebook
+                                </label>
+                            </li>
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" value="Outros" id="condition-checkbox4">
-                            <label class="form-check-label text-uppercase small text-muted" for="condition-checkbox4">
-                                Outros
-                            </label>
-                        </div>
-                    </section>
+                            <li>
+                                <input class="form-check-input" type="checkbox" value="Hardware" name = "checkbox">
+                                <label class="form-check-label text-uppercase small text-muted">
+                                    Hardware
+                                </label>
+                            </li>
+
+                            <li>
+                                <input class="form-check-input" type="checkbox" value="Periferico" name = "checkbox">
+                                <label class="form-check-label text-uppercase small text-muted">
+                                    Periferico
+                                </label>
+                            </li>
+
+                            <li>
+                                <input class="form-check-input" type="checkbox" value="TV/Monitor" name = "checkbox">
+                                <label class="form-check-label text-uppercase small text-muted">
+                                    TV/Monitor
+                                </label>
+                            </li>
+
+                            <li>
+                                <input class="form-check-input" type="checkbox" value="Outros" name = "checkbox">
+                                <label class="form-check-label text-uppercase small text-muted">
+                                    Outros
+                                </label>
+                            </li>
+                            <input type="submit">
+                        </ul>
+                    </form>
                 </section>       
             </section>
         </div>

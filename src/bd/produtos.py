@@ -156,3 +156,6 @@ for item in todos_produtos:
 
     if item['kabum'] == None and item['pichau'] == None:
         produtos.deleteOne({{'nome' : item['name']}})
+
+kabum.deletemany({})
+pichau.deletemany({})

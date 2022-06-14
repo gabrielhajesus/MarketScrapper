@@ -18,11 +18,7 @@ class Banco:
         produtos = db.produtos
         return produtos
     
-    def usuarios(db):
-
-        usuarios = db.usuarios
-        return usuarios
     
     def convertenome(nome):
-        nome = nome.replace(',','').replace('-','').replace(' ','').replace('(', '').replace(':','').replace('|','').replace('?','').replace('{','').replace('}','').replace('`','').replace('^', '').replace(')','').replace('.','').replace('/','').replace('"','').replace('!','').replace(';','').replace('+','').replace('~','').replace('<','').replace('>','').replace('	','').replace('*','').lower()
+        nome = nome.replace(',','').replace('-','').replace(' ','').replace('(', '').replace(':','').replace('|','').replace('?','').replace('{','').replace('}','').replace('`','').replace('^', '').replace(')','').replace('.','').replace('/','').replace('"','').replace('!','').replace(';','').replace('+','').replace('~','').replace('<','').replace('>','').replace('	','').replace('*','').replace('\'','').lower()
         return nome

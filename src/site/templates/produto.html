@@ -7,6 +7,11 @@
             <h1 class="font-weight-light">{{ resultado.name }}</h1>
             <p> A promoção com melhor preço </p>
             <p> {{ resultado.menor_preco }}</p>
+            <p> Categoria: 
+             {% for item in resultado.categoria %}
+                {{ item }}
+            {% endfor %}
+                </p>
             <a class="btn btn-outline-dark" href="{{ resultado.link }}">Ver Produto</a>
         </div>
     </div>

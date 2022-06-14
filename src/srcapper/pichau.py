@@ -6,25 +6,23 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from pymongo import MongoClient
 from urllib.request import Request, URLopener
-import pandas as pd
 import time
 from banco import Banco
+from inicia_selenium import iniciaselenium
 
 
 #Conexão com o Mongodb
 banco_de_dados = Banco.inicia_banco()
 pichau = Banco.pichau(banco_de_dados)
 
-#Definindo o navegador do drive como Chrome
-options= webdriver.ChromeOptions()
-
-#Executando drive do google
-driver = webdriver.Chrome(service = Service('/Users/Gabriel/drivechrome/chromedriver') , options= options)
+#Iniciando o Selenium
+driver = iniciaselenium()
 driver.maximize_window()
 print ("Chrome Inicializado")
 
 # Obtendo a campanha de promoção atual
 driver.get("https://www.pichau.com.br/")
+
 paginaprincipal = BeautifulSoup(driver.page_source, 'html.parser')
 campanhaAtual = paginaprincipal.main.div.div.div.div.ul.li.a.get('href')
 nomecampanha = paginaprincipal.main.div.div.div.div.ul.li.a.get('title')
@@ -33,7 +31,7 @@ nomecampanha = paginaprincipal.main.div.div.div.div.ul.li.a.get('title')
 driver.get(campanhaAtual)
 print('Pegou a campanha Atual')
 
-# Pegando o tamanho do scroll
+# Pegando o tamanho completo da página
 SCROLL_PAUSE_TIME = 2
 last_height = driver.execute_script("return document.body.scrollHeight")
 print(range(last_height))
@@ -52,15 +50,14 @@ while True:
             driver.execute_script("window.scrollTo(0, "+ str(i*250) +");")
         break
     last_height = new_height
-
-depoisdoscroll = BeautifulSoup(driver.page_source, 'html.parser')
+paginacompleta = BeautifulSoup(driver.page_source, 'html.parser')
 print('Pagina completa')
 
 #Fechando o Driver
 driver.quit()
 
 # Obtendo as TAGs de interesse
-anuncios = depoisdoscroll.find('main').find('div', {'class' : "infinite-scroll-component__outerdiv"}).find('div').find('div').findAll('a')
+anuncios = paginacompleta.find('main').find('div', {'class' : "infinite-scroll-component__outerdiv"}).find('div').find('div').findAll('a')
 
 # Declarando variável cards e imagens
 cards = []
