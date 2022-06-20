@@ -80,7 +80,7 @@ for i in range(page):
         image = anuncio.find('img', {'class':'imageCard'})
         nome = card['name']
         nome = Banco.convertenome(nome)
-        urlretrieve(image.get('src'), './src/site/static/img' + nome + '.jpg')
+        urlretrieve(image.get('src'), './src/site/static/img/' + nome + '.jpg')
 
 #Fechando o Driver
 driver.quit()
