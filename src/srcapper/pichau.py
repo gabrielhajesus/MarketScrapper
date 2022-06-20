@@ -16,7 +16,7 @@ banco_de_dados = Banco.inicia_banco()
 pichau = Banco.pichau(banco_de_dados)
 
 #Iniciando o Selenium
-driver = iniciaselenium()
+driver = iniciaselenium.inicia()
 driver.maximize_window()
 print ("Chrome Inicializado")
 
@@ -32,7 +32,7 @@ driver.get(campanhaAtual)
 print('Pegou a campanha Atual')
 
 # Pegando o tamanho completo da página
-SCROLL_PAUSE_TIME = 2
+SCROLL_PAUSE_TIME = 3
 last_height = driver.execute_script("return document.body.scrollHeight")
 print(range(last_height))
 while True:
@@ -122,7 +122,7 @@ with open("saida_texto.txt", "w", encoding= "utf-8") as arquivo:
 for imagem in imagens:
     nome = imagem['nome']
     nome = Banco.convertenome(nome)
-    filename, headers = opener.retrieve(imagem['imagem'], './data/pichau/img/'+ nome + '.jpg')
+    filename, headers = opener.retrieve(imagem['imagem'], './src/site/static/img/'+ nome + '.jpg')
 
 
 #Inserindo o resultado no banco de dados
